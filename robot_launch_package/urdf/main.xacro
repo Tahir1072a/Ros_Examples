@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<robot name="main" xmlns:xacro="http:://www.ros.org/wiki/xacro">
+
+    <xacro:include filename="material.urdf.xacro"/>
+    <xacro:include filename="my_robot.urdf.xacro"/>
+    
+</robot>
