@@ -41,6 +41,14 @@ def generate_launch_description():
         }]
     )
 
+    robot_controllers = PathJoinSubstitution(
+        [
+            robot_description_dir,
+            "config",
+            "robot_controller.yaml"
+        ]
+    )
+
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(
             get_package_share_directory("ros_gz_sim"), "launch"), "/gz_sim.launch.py"
@@ -62,9 +70,33 @@ def generate_launch_description():
         executable="parameter_bridge",
         arguments=[
             "/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock",
-            "/1_imu@sensor_msgs/msg/Imu[gz.msgs.IMU",
-            "/2_imu@sensor_msgs/msg/Imu[gz.msgs.IMU",
-            "/3_imu@sensor_msgs/msg/Imu[gz.msgs.IMU",
+            "/imu1@sensor_msgs/msg/Imu[gz.msgs.IMU",
+            "/imu2@sensor_msgs/msg/Imu[gz.msgs.IMU",
+            "/imu3@sensor_msgs/msg/Imu[gz.msgs.IMU",
+        ]
+    )
+
+    joint_state_broadcaster_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["joint_state_broadcaster", "--controller-manager", "/controller_manager"]
+    )
+
+    robot_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["diff_drive_robot_controller", "--controller-manager", "/controller_manager"],
+        output="screen"
+    )
+
+    control_node = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        parameters=[robot_controllers],
+        output=["both"],
+        remappings=[
+            ("~/robot_description", "/robot_description"),
+            ("/diffbot_base_controller/cmd_vel", "/cmd_vel"),
         ]
     )
 
@@ -75,5 +107,8 @@ def generate_launch_description():
         robot_state_publisher_node,
         gazebo,
         gz_spawn_entity,
-        gz_ros2_bridge
+        gz_ros2_bridge,
+        control_node,
+        robot_controller_spawner,
+        joint_state_broadcaster_spawner
     ])
