@@ -8,8 +8,9 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 
+# Install other directories
 install(
-  DIRECTORY urdf launch world config rviz models
+  DIRECTORY urdf launch world config rviz models photos
   DESTINATION share/${PROJECT_NAME}
 )
 
