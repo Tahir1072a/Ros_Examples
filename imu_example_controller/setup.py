@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            "subscriber_imu = imu_example_controller.subscriber_imu:main" 
+            "subscriber_imu = imu_example_controller.subscriber_imu:main",
+            "robot_movement = imu_example_controller.robot_movement:main" 
         ],
     },
 )
